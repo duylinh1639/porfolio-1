@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aurora Portfolio | Minimalist Design</title>
+    <meta name="description" content="Portfolio cá nhân phong cách Aurora - Minimalist & Modern">
+
+    <!-- 1. FONTS & ICONS (Google Fonts + FontAwesome) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* =========================================
+           2. CSS VARIABLES & RESET
+           ========================================= */
+        :root {
+            /* Màu sắc (Dark Mode mặc định) */
+            --bg-body: #0a0a0a;
+            --bg-glass: rgba(255, 255, 255, 0.03);
+            --bg-glass-hover: rgba(255, 255, 255, 0.08);
+            --text-main: #ffffff;
+            --text-muted: #a0a0a0;
+            --accent: #d4af37; /* Màu vàng gold sang trọng */
+            --border-color: rgba(255, 255, 255, 0.1);
+            
+            /* Typography */
+            --font-heading: 'Playfair Display', serif;
+            --font-body: 'Inter', sans-serif;
+
+            /* Spacing & Transition */
+            --container-width: 1200px;
+            --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        /* Light Mode Class */
+        body.light-mode {
+            --bg-body: #f5f5f5;
+            --bg-glass: rgba(0, 0, 0, 0.03);
+            --bg-glass-hover: rgba(0, 0, 0, 0.05);
+            --text-main: #1a1a1a;
+            --text-muted: #666666;
+            --border-color: rgba(0, 0, 0, 0.1);
+            --accent: #2c3e50; /* Màu xanh đen cho light mode */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none; /* Ẩn con trỏ mặc định để dùng custom cursor */
+        }
+
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            line-height: 1.7;
+            overflow-x: hidden;
+            transition: background-color 0.5s ease, color 0.5s ease;
+        }
+
+        a { text-decoration: none; color: inherit; transition: var(--transition); }
+        ul { list-style: none; }
+        img { width: 100%; display: block; object-fit: cover; }
+
+        /* =========================================
+           3. UTILITY CLASSES & ANIMATION
+           ========================================= */
+        .container {
+            max-width: var(--container-width);
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .section-padding { padding: 100px 0; }
+
+        /* Custom Cursor */
+        .cursor-dot, .cursor-outline {
+            position: fixed;
+            top: 0; left: 0;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            z-index: 9999;
+            pointer-events: none;
+        }
+        .cursor-dot {
+            width: 8px; height: 8px;
+            background-color: var(--accent);
+        }
+        .cursor-outline {
+            width: 40px; height: 40px;
+            border: 1px solid var(--text-muted);
+            transition: width 0.2s, height 0.2s, background-color 0.2s;
+        }
+        
+        /* Hiệu ứng khi hover vào link/button */
+        body.hovering .cursor-outline {
+            width: 60px; height: 60px;
+            background-color: rgba(212, 175, 55, 0.1);
+            border-color: var(--accent);
+        }
+
+        /* Scroll Fade-in Animation */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Typography Styles */
+        h1, h2, h3, h4 { font-family: var(--font-heading); font-weight: 400; }
+        .section-title {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        .section-subtitle {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--accent);
+            margin-bottom: 50px;
+            display: block;
+        }
+
+        /* =========================================
+           4. NAVBAR
+           ========================================= */
+        .navbar {
+            position: fixed;
+            top: 0; width: 100%;
+            padding: 25px 0;
+            z-index: 1000;
+            transition: var(--transition);
+        }
+
+        .navbar.scrolled {
+            background: rgba(10, 10, 10, 0.8); /* Darker background on scroll */
+            backdrop-filter: blur(15px);
+            padding: 15px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        body.light-mode .navbar.scrolled { background: rgba(255, 255, 255, 0.8); }
+
+        .nav-container {
+            display: flex; justify-content: space-between; align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-family: var(--font-heading);
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .nav-links { display: flex; gap: 40px; }
+        .nav-link {
+            font-size: 0.95rem;
+            position: relative;
+            opacity: 0.8;
+        }
+        .nav-link::after {
+            content: ''; position: absolute;
+            width: 0; height: 1px; bottom: -5px; left: 0;
+            background: var(--accent);
+            transition: 0.3s;
+        }
+        .nav-link:hover { opacity: 1; color: var(--accent); }
+        .nav-link:hover::after { width: 100%; }
+
+        /* Tools: Theme Toggle & Mobile Menu */
+        .nav-tools { display: flex; align-items: center; gap: 20px; }
+        
+        .theme-btn {
+            background: none; border: none;
+            color: var(--text-main);
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+        
+        .menu-btn { display: none; font-size: 1.5rem; background: none; border: none; color: var(--text-main); }
+
+        /* =========================================
+           5. HERO SECTION
+           ========================================= */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            padding-top: 80px;
+        }
+
+        .hero-content { max-width: 800px; position: relative; z-index: 2; }
+        .hero-greeting { font-size: 1.1rem; color: var(--accent); letter-spacing: 2px; margin-bottom: 1rem; }
+        
+        .hero-title {
+            font-size: 4.5rem;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+        }
+        
+        /* Typewriter Effect */
+        .typewriter-text { color: var(--text-muted); font-family: monospace; font-size: 1.5rem; }
+        .cursor-blink {
+            display: inline-block; width: 2px; height: 1.5rem;
+            background: var(--accent); margin-left: 5px;
+            animation: blink 1s infinite;
+        }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+        .hero-cta {
+            margin-top: 40px;
+            display: inline-block;
+            padding: 12px 35px;
+            border: 1px solid var(--border-color);
+            border-radius: 30px;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .hero-cta:hover {
+            background: var(--accent);
+            color: #000;
+            border-color: var(--accent);
+        }
+
+        /* Scroll Down Indicator */
+        .scroll-down {
+            position: absolute; bottom: 50px; left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.8rem; letter-spacing: 2px;
+            animation: bounce 2s infinite;
+        }
+        @keyframes bounce { 0%, 20%, 50%, 80%, 100% {transform: translateX(-50%) translateY(0);} 40% {transform: translateX(-50%) translateY(-10px);} 60% {transform: translateX(-50%) translateY(-5px);} }
+
+        /* =========================================
+           6. ABOUT & SKILLS
+           ========================================= */
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .about-img-wrapper {
+            position: relative;
+            overflow: hidden;
+            border-radius: 5px;
+        }
+        .about-img-wrapper img {
+            transition: transform 0.5s ease;
+            filter: grayscale(100%);
+        }
+        .about-img-wrapper:hover img { transform: scale(1.05); filter: grayscale(0%); }
+
+        .skill-bar { margin-bottom: 20px; }
+        .skill-info { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 0.9rem; }
+        .progress-bg {
+            width: 100%; height: 4px;
+            background: var(--bg-glass-hover);
+            border-radius: 2px;
+        }
+        .progress-fill {
+            height: 100%; background: var(--accent);
+            width: 0; border-radius: 2px;
+            transition: width 1.5s ease;
+        }
+
+        /* =========================================
+           7. PORTFOLIO (MASONRY GRID)
+           ========================================= */
+        /* Sử dụng CSS Columns để tạo Masonry chuẩn mà không cần JS phức tạp */
+        .masonry-grid {
+            column-count: 3;
+            column-gap: 30px;
+        }
+
+        .portfolio-item {
+            break-inside: avoid; /* Không cắt đôi item */
+            margin-bottom: 30px;
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: none;
+        }
+
+        .portfolio-item img {
+            width: 100%;
+            transition: transform 0.6s ease;
+        }
+
+        .portfolio-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: var(--transition);
+            backdrop-filter: blur(3px);
+        }
+
+        .portfolio-item:hover img { transform: scale(1.1); }
+        .portfolio-item:hover .portfolio-overlay { opacity: 1; }
+
+        .p-title { font-family: var(--font-heading); font-size: 1.5rem; transform: translateY(20px); transition: 0.4s; color: #fff; }
+        .p-cat { color: var(--accent); font-size: 0.9rem; margin-top: 5px; transform: translateY(20px); transition: 0.4s 0.1s; }
+
+        .portfolio-item:hover .p-title,
+        .portfolio-item:hover .p-cat { transform: translateY(0); }
+
+        /* =========================================
+           8. SERVICES / BLOG
+           ========================================= */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .service-card {
+            background: var(--bg-glass);
+            padding: 40px 30px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            transition: var(--transition);
+        }
+        
+        .service-card:hover {
+            transform: translateY(-10px);
+            background: var(--bg-glass-hover);
+            border-color: var(--accent);
+        }
+
+        .s-icon { font-size: 2rem; color: var(--accent); margin-bottom: 20px; }
+        .s-title { font-size: 1.3rem; margin-bottom: 15px; }
+        .s-desc { font-size: 0.95rem; color: var(--text-muted); margin-bottom: 20px; }
+        .s-link { font-size: 0.9rem; border-bottom: 1px solid var(--border-color); padding-bottom: 2px; }
+
+        /* =========================================
+           9. CONTACT & FOOTER
+           ========================================= */
+        .contact-wrapper {
+            background: var(--bg-glass);
+            padding: 50px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(10px);
+        }
+
+        .contact-form { display: grid; gap: 20px; }
+        
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 15px;
+            background: rgba(0,0,0,0.2);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            outline: none;
+            transition: 0.3s;
+        }
+        
+        .form-group input:focus, .form-group textarea:focus {
+            border-color: var(--accent);
+            background: rgba(0,0,0,0.4);
+        }
+
+        .btn-submit {
+            background: var(--text-main);
+            color: var(--bg-body);
+            border: none;
+            padding: 15px 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .btn-submit:hover { background: var(--accent); color: #fff; }
+
+        footer {
+            padding: 40px 0;
+            text-align: center;
+            border-top: 1px solid var(--border-color);
+            font-size: 0.9rem; color: var(--text-muted);
+        }
+
+        /* =========================================
+           10. MODAL
+           ========================================= */
+        .modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 2000;
+            display: flex; justify-content: center; align-items: center;
+            opacity: 0; pointer-events: none;
+            transition: 0.3s;
+        }
+        .modal.active { opacity: 1; pointer-events: all; }
+        
+        .modal-content {
+            background: var(--bg-body);
+            width: 90%; max-width: 800px;
+            padding: 40px;
+            border: 1px solid var(--border-color);
+            position: relative;
+            transform: translateY(50px);
+            transition: 0.4s;
+        }
+        .modal.active .modal-content { transform: translateY(0); }
+        
+        .close-modal {
+            position: absolute; top: 20px; right: 20px;
+            font-size: 1.5rem; cursor: pointer; color: var(--text-muted);
+        }
+        .close-modal:hover { color: var(--accent); }
+
+        /* =========================================
+           11. RESPONSIVE
+           ========================================= */
+        @media (max-width: 1024px) {
+            .masonry-grid { column-count: 2; }
+        }
+
+        @media (max-width: 768px) {
+            .hero-title { font-size: 3rem; }
+            .about-grid { grid-template-columns: 1fr; }
+            .masonry-grid { column-count: 1; }
+            
+            /* Mobile Nav */
+            .menu-btn { display: block; z-index: 1001; position: relative; }
+            .nav-links {
+                position: fixed; top: 0; right: -100%;
+                width: 70%; height: 100vh;
+                background: var(--bg-body);
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                border-left: 1px solid var(--border-color);
+                transition: 0.4s;
+            }
+            .nav-links.active { right: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Custom Cursor Elements -->
+    <div class="cursor-dot"></div>
+    <div class="cursor-outline"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="#" class="logo hover-target">Aurora.</a>
+            <ul class="nav-links">
+                <li><a href="#home" class="nav-link hover-target">Home</a></li>
+                <li><a href="#about" class="nav-link hover-target">About</a></li>
+                <li><a href="#portfolio" class="nav-link hover-target">Portfolio</a></li>
+                <li><a href="#blog" class="nav-link hover-target">Blog</a></li>
+                <li><a href="#contact" class="nav-link hover-target">Contact</a></li>
+            </ul>
+            <div class="nav-tools">
+                <button class="theme-btn hover-target"><i class="fas fa-sun"></i></button>
+                <button class="menu-btn hover-target"><i class="fas fa-bars"></i></button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="container">
+            <div class="hero-content reveal">
+                <p class="hero-greeting">HELLO, I'M</p>
+                <h1 class="hero-title">Alexander<br>Nguyen</h1>
+                <div style="margin-bottom: 30px;">
+                    <span class="typewriter-text"></span><span class="cursor-blink"></span>
+                </div>
+                <a href="#portfolio" class="hero-cta hover-target">View My Work</a>
+            </div>
+        </div>
+        <div class="scroll-down">SCROLL DOWN</div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="section-padding">
+        <div class="container">
+            <span class="section-subtitle reveal">01. Who I Am</span>
+            <h2 class="section-title reveal">About Me</h2>
+            
+            <div class="about-grid reveal">
+                <div class="about-img-wrapper">
+                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Profile">
+                </div>
+                <div class="about-desc">
+                    <p style="margin-bottom: 30px; color: var(--text-muted);">
+                        I am a passionate UI/UX Designer and Front-end Developer based in Saigon. I specialize in building high-quality websites and applications with a focus on simplicity, aesthetics, and user experience.
+                    </p>
+                    
+                    <!-- Skill Bars -->
+                    <div class="skill-bar">
+                        <div class="skill-info"><span>UI/UX Design</span><span>90%</span></div>
+                        <div class="progress-bg"><div class="progress-fill" data-width="90%"></div></div>
+                    </div>
+                    <div class="skill-bar">
+                        <div class="skill-info"><span>Web Development</span><span>85%</span></div>
+                        <div class="progress-bg"><div class="progress-fill" data-width="85%"></div></div>
+                    </div>
+                    <div class="skill-bar">
+                        <div class="skill-info"><span>Branding</span><span>75%</span></div>
+                        <div class="progress-bg"><div class="progress-fill" data-width="75%"></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Portfolio Section (Masonry) -->
+    <section id="portfolio" class="section-padding">
+        <div class="container">
+            <span class="section-subtitle reveal">02. Selected Works</span>
+            <h2 class="section-title reveal" style="margin-bottom: 50px;">Portfolio</h2>
+
+            <div class="masonry-grid reveal">
+                <!-- Project 1 -->
+                <div class="portfolio-item hover-target" onclick="openModal('Project One', 'Branding', 'Description for project one goes here.')">
+                    <img src="https://images.unsplash.com/photo-1481487484168-9b995ecc168d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Work 1">
+                    <div class="portfolio-overlay">
+                        <h3 class="p-title">Luxury Brand</h3>
+                        <span class="p-cat">Branding / UI</span>
+                    </div>
+                </div>
+                <!-- Project 2 -->
+                <div class="portfolio-item hover-target" onclick="openModal('Project Two', 'Web Design', 'Description for project two goes here.')">
+                    <img src="https://images.unsplash.com/photo-1515405295579-ba7b45403062?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Work 2">
+                    <div class="portfolio-overlay">
+                        <h3 class="p-title">Interior Design</h3>
+                        <span class="p-cat">Web Design</span>
+                    </div>
+                </div>
+                <!-- Project 3 -->
+                <div class="portfolio-item hover-target" onclick="openModal('Project Three', 'Photography', 'Description for project three.')">
+                    <img src="https://images.unsplash.com/photo-1505330622279-bf7d7fc918f4?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Work 3">
+                    <div class="portfolio-overlay">
+                        <h3 class="p-title">Minimal Life</h3>
+                        <span class="p-cat">Photography</span>
+                    </div>
+                </div>
+                <!-- Project 4 -->
+                <div class="portfolio-item hover-target" onclick="openModal('Project Four', 'App Dev', 'Full stack application details.')">
+                    <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Work 4">
+                    <div class="portfolio-overlay">
+                        <h3 class="p-title">Crypto App</h3>
+                        <span class="p-cat">App Development</span>
+                    </div>
+                </div>
+                <!-- Project 5 -->
+                <div class="portfolio-item hover-target" onclick="openModal('Project Five', 'Architecture', 'Architecture website design.')">
+                    <img src="https://images.unsplash.com/photo-1600607686527-6fb886090705?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Work 5">
+                    <div class="portfolio-overlay">
+                        <h3 class="p-title">Modern Villa</h3>
+                        <span class="p-cat">Architecture</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Blog / Services Section -->
+    <section id="blog" class="section-padding" style="background: var(--bg-glass);">
+        <div class="container">
+            <span class="section-subtitle reveal">03. What I Do</span>
+            <h2 class="section-title reveal" style="margin-bottom: 50px;">Services</h2>
+            
+            <div class="services-grid reveal">
+                <div class="service-card hover-target">
+                    <div class="s-icon"><i class="fas fa-layer-group"></i></div>
+                    <h3 class="s-title">UI/UX Design</h3>
+                    <p class="s-desc">Creating intuitive and aesthetically pleasing interfaces for web and mobile.</p>
+                    <a href="#" class="s-link">Read More</a>
+                </div>
+                <div class="service-card hover-target">
+                    <div class="s-icon"><i class="fas fa-code"></i></div>
+                    <h3 class="s-title">Development</h3>
+                    <p class="s-desc">Building fast, responsive, and accessible websites using clean code.</p>
+                    <a href="#" class="s-link">Read More</a>
+                </div>
+                <div class="service-card hover-target">
+                    <div class="s-icon"><i class="fas fa-camera"></i></div>
+                    <h3 class="s-title">Photography</h3>
+                    <p class="s-desc">Capturing moments and product photography for branding purposes.</p>
+                    <a href="#" class="s-link">Read More</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="section-padding">
+        <div class="container">
+            <span class="section-subtitle reveal">04. Get In Touch</span>
+            <h2 class="section-title reveal" style="margin-bottom: 50px;">Contact</h2>
+
+            <div class="contact-wrapper reveal">
+                <form class="contact-form" onsubmit="event.preventDefault(); alert('Message sent!');">
+                    <div class="form-group">
+                        <input type="text" placeholder="Your Name" required class="hover-target">
+                    </div>
+                    <div class="form-group">
+                        <input type="email" placeholder="Your Email" required class="hover-target">
+                    </div>
+                    <div class="form-group">
+                        <textarea rows="5" placeholder="Your Message" required class="hover-target"></textarea>
+                    </div>
+                    <button type="submit" class="btn-submit hover-target">Send Message</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Aurora Portfolio. Designed with <i class="fas fa-heart" style="color: var(--accent);"></i> by Alexander.</p>
+            <div style="margin-top: 10px;">
+                <a href="#" style="margin: 0 10px;"><i class="fab fa-twitter"></i></a>
+                <a href="#" style="margin: 0 10px;"><i class="fab fa-instagram"></i></a>
+                <a href="#" style="margin: 0 10px;"><i class="fab fa-linkedin"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Project Modal Structure -->
+    <div class="modal" id="projectModal">
+        <div class="modal-content">
+            <span class="close-modal hover-target" onclick="closeModal()">&times;</span>
+            <h2 id="modalTitle" style="margin-bottom: 10px; color: var(--accent);">Project Title</h2>
+            <p id="modalCat" style="margin-bottom: 20px; font-style: italic; color: var(--text-muted);">Category</p>
+            <p id="modalDesc">Project description goes here.</p>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // 1. Custom Cursor Logic
+        const cursorDot = document.querySelector('.cursor-dot');
+        const cursorOutline = document.querySelector('.cursor-outline');
+        const hoverTargets = document.querySelectorAll('.hover-target');
+
+        window.addEventListener('mousemove', (e) => {
+            const posX = e.clientX;
+            const posY = e.clientY;
+
+            cursorDot.style.left = `${posX}px`;
+            cursorDot.style.top = `${posY}px`;
+
+            // Outline follows with a slight delay for smoothness
+            cursorOutline.animate({
+                left: `${posX}px`,
+                top: `${posY}px`
+            }, { duration: 500, fill: "forwards" });
+        });
+
+        // Hover states
+        hoverTargets.forEach(el => {
+            el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
+            el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
+        });
+
+        // 2. Typewriter Effect
+        const textElement = document.querySelector('.typewriter-text');
+        const phrases = ['UI/UX Designer', 'Freelancer', 'Minimalist'];
+        let phraseIndex = 0;
+        let charIndex = 0;
+        let isDeleting = false;
+
+        function typeEffect() {
+            const currentPhrase = phrases[phraseIndex];
+            
+            if (isDeleting) {
+                textElement.textContent = currentPhrase.substring(0, charIndex - 1);
+                charIndex--;
+            } else {
+                textElement.textContent = currentPhrase.substring(0, charIndex + 1);
+                charIndex++;
+            }
+
+            let typeSpeed = isDeleting ? 50 : 100;
+
+            if (!isDeleting && charIndex === currentPhrase.length) {
+                isDeleting = true;
+                typeSpeed = 2000; // Pause at end
+            } else if (isDeleting && charIndex === 0) {
+                isDeleting = false;
+                phraseIndex = (phraseIndex + 1) % phrases.length;
+                typeSpeed = 500;
+            }
+
+            setTimeout(typeEffect, typeSpeed);
+        }
+        document.addEventListener('DOMContentLoaded', typeEffect);
+
+        // 3. Scroll Animation (Intersection Observer)
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    // Trigger skill bars
+                    if (entry.target.querySelector('.progress-fill')) {
+                        const bars = entry.target.querySelectorAll('.progress-fill');
+                        bars.forEach(bar => bar.style.width = bar.getAttribute('data-width'));
+                    }
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        // 4. Navbar Scroll Effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // 5. Theme Toggle
+        const themeBtn = document.querySelector('.theme-btn');
+        themeBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-mode');
+            const icon = themeBtn.querySelector('i');
+            if (document.body.classList.contains('light-mode')) {
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+            } else {
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+            }
+        });
+
+        // 6. Mobile Menu
+        const menuBtn = document.querySelector('.menu-btn');
+        const navLinks = document.querySelector('.nav-links');
+        menuBtn.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            // Toggle icon
+            const icon = menuBtn.querySelector('i');
+            icon.classList.toggle('fa-bars');
+            icon.classList.toggle('fa-times');
+        });
+
+        // Close menu when clicking a link
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+                const icon = menuBtn.querySelector('i');
+                icon.classList.add('fa-bars');
+                icon.classList.remove('fa-times');
+            });
+        });
+
+        // 7. Modal Logic
+        const modal = document.getElementById('projectModal');
+        
+        window.openModal = function(title, cat, desc) {
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalCat').textContent = cat;
+            document.getElementById('modalDesc').textContent = desc;
+            modal.classList.add('active');
+        }
+
+        window.closeModal = function() {
+            modal.classList.remove('active');
+        }
+
+        // Close on outside click
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>
